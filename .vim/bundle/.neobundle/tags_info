@@ -1,0 +1,15 @@
+base16-vim
+indentLine
+jedi-vim
+lightline.vim
+neobundle.vim
+neocomplete
+neomru.vim
+neosnippet
+neosnippet-snippets
+nerdtree
+python-syntax
+syntastic
+unite.vim
+vim-autoclose
+vimproc

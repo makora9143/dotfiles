@@ -1,0 +1,9 @@
+defutf8 on
+defencoding utf8
+encoding utf-8 utf-8
+shell /bin/zsh
+
+escape ^Tt
+defbce "on"
+term xterm-256color
+hardstatus alwayslastline '%L=%{= .b}%-w%46>%{= .c}%n %t*%{= .b}%+w%-16=%{= .y}[%l]'
