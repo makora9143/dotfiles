@@ -1,3 +1,5 @@
+let $PATH = "~/.pyenv/shims:".$PATH
+
 set nocompatible
 if 0 | endif
 
@@ -26,13 +28,26 @@ else
 endif
 NeoBundle 'Shougo/neosnippet'
 NeoBundle 'Shougo/neosnippet-snippets'
+NeoBundle 'itchyny/lightline.vim'
 NeoBundle 'Townk/vim-autoclose'
 NeoBundle 'scrooloose/nerdtree'
 NeoBundle 'Yggdroot/indentLine'
 NeoBundle 'chriskempson/base16-vim'
-NeoBundle 'davidhalter/jedi-vim'
-NeoBundle 'hdima/python-syntax'
-NeoBundle 'itchyny/lightline.vim'
+NeoBundleLazy 'davidhalter/jedi-vim', {
+      \ "autoload": {
+      \  "filetypes": ["python"]
+      \ }}
+NeoBundleLazy "lambdalisue/vim-pyenv", {
+      \ "depends": ['davidhalter/jedi-vim'],
+      \ "autoload": {
+      \ "filetypes": ["python"]
+      \ }}
+NeoBundle 'hdima/python-syntax', {
+      \ "autoload": {
+      \  "filetypes": ["python"]
+      \ }}
+NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'airblade/vim-gitgutter'
 
 
 call neobundle#end()
@@ -56,6 +71,7 @@ set tabstop=4
 set shiftwidth=4
 set smarttab
 set expandtab
+set tw=0
 
 set ignorecase
 set smartcase
@@ -63,25 +79,33 @@ set incsearch
 set nohlsearch
 set encoding=utf-8
 set notitle
+set scrolloff=8
 
 set number
 set noswapfile
-"set cursorline
-"highlight CursorLineNr term=bold ctermfg=blue
+set nobackup
+set clipboard=unnamed,autoselect
+set mouse=a
+set autoread
 
 set laststatus=2
 set showmatch
 set whichwrap=b,s,[,],<,>
 set backspace=indent,eol,start
-set nobackup
 set list
 set listchars=trail:.
 set timeoutlen=200
 
 autocmd FileType python setlocal completeopt-=preview
 
-nnoremap <silent><C-e> :NERDTreeToggle<CR>
 
+
+
+"------------------------------------
+" NERDTree
+"------------------------------------
+nnoremap <silent><C-e> :NERDTreeToggle<CR>
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
 "------------------------------------
 " neocomplete.vim
@@ -119,10 +143,14 @@ inoremap <expr><C-e>  neocomplete#cancel_popup()
 " Close popup by <Space>.
 inoremap <expr><Space> pumvisible() ? neocomplete#close_popup() : "\<Space>"
 
-autocmd FileType python setlocal omnifunc=jedi#completions
-let g:jedi#completions_enabled = 0
-let g:jedi#auto_vim_configuration = 0
 
+"------------------------------------
+" jedi-vim
+"------------------------------------
+autocmd FileType python setlocal omnifunc=jedi#completions
+let g:jedi#auto_vim_configuration = 0
+let g:jedi#show_call_signatures = 0
+let g:jedi#popup_on_dot = 0
 if !exists('g:neocomplete#force_omni_input_patterns')
         let g:neocomplete#force_omni_input_patterns = {}
 endif
@@ -216,21 +244,86 @@ let g:base16_shell_path = expand('~/.config/base16-shell')
 let base16colorspace=256
 set t_Co=256
 set background=dark
+let g:gitgutter_sign_added = '✚'
+let g:gitgutter_sign_modified = '➜'
+let g:gitgutter_sign_removed = '✘'
 let g:lightline = {
       \ 'colorscheme': 'wombat',
-      \ 'component': {
-      \   'readonly': '%{&readonly?"⭤":""}',
-      \ },
       \ 'separator': { 'left': '⮀', 'right': '⮂' },
       \ 'subseparator': { 'left': '⮁', 'right': '⮃' },
       \ 'active': {
+      \    'left': [ [ 'mode', 'paste' ],
+      \              [ 'pyenv' ],
+      \              [ 'fugitive', 'gitgutter', 'readonly', 'filename', 'modified' ] ],
       \   'right': [ [ 'lineinfo',  'syntastic' ],
       \              [ 'percent' ],
       \              [ 'fileformat', 'fileencoding', 'filetype' ] ]
       \ },
       \ 'component_function': {
-      \   'syntastic': 'SyntasticStatuslineFlag'
+      \   'syntastic': 'SyntasticStatuslineFlag',
+      \   'fugitive': 'LightLineFugitive',
+      \   'readonly': 'LightLineReadonly',
+      \   'modified': 'LightLineModified',
+      \   'pyenv': 'MyPyenv',
+      \   'gitgutter': 'MyGitGutter',
       \ }
       \ }
+
+function! LightLineModified()
+  if &filetype == "help"
+    return ""
+  elseif &modified
+    return "+"
+  elseif &modifiable
+    return ""
+  else
+    return ""
+  endif
+endfunction
+
+function! LightLineReadonly()
+  if &filetype == "help"
+    return "help"
+  elseif &readonly
+    return "⭤"
+  else
+    return ""
+  endif
+endfunction
+
+function! LightLineFugitive()
+"  return exists('*fugitive#head') ? fugitive#head() : ''
+  if exists('*fugitive#head')
+      let _ = fugitive#head()
+      return strlen(_) ? '⭠ '._ : ''
+  endif
+endfunction
+
+function! MyPyenv()
+ " return '⌘ '.pyenv#info#preset('long')
+ return pyenv#info#format('⌘ %sv %{(|)}iv')
+endfunction
+
+function! MyGitGutter()
+  if ! exists('*GitGutterGetHunkSummary')
+        \ || ! get(g:, 'gitgutter_enabled', 0)
+        \ || winwidth('.') <= 90
+    return ''
+  endif
+  let symbols = [
+        \ g:gitgutter_sign_added . ' ',
+        \ g:gitgutter_sign_modified . ' ',
+        \ g:gitgutter_sign_removed . ' '
+        \ ]
+  let hunks = GitGutterGetHunkSummary()
+  let ret = []
+  for i in [0, 1, 2]
+    if hunks[i] > 0
+      call add(ret, symbols[i] . hunks[i])
+    endif
+  endfor
+  return join(ret, ' ')
+endfunction
+
 colorscheme base16-material
 syntax on

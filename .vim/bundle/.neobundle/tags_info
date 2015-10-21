@@ -12,4 +12,7 @@ python-syntax
 syntastic
 unite.vim
 vim-autoclose
+vim-fugitive
+vim-gitgutter
+vim-pyenv
 vimproc
