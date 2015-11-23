@@ -28,9 +28,10 @@ else
 endif
 NeoBundle 'Shougo/neosnippet'
 NeoBundle 'Shougo/neosnippet-snippets'
+NeoBundle 'Shougo/vimfiler'
 NeoBundle 'itchyny/lightline.vim'
-NeoBundle 'Townk/vim-autoclose'
-NeoBundle 'scrooloose/nerdtree'
+"NeoBundle 'Townk/vim-autoclose'
+"NeoBundle 'scrooloose/nerdtree'
 NeoBundle 'Yggdroot/indentLine'
 NeoBundle 'chriskempson/base16-vim'
 NeoBundleLazy 'davidhalter/jedi-vim', {
@@ -48,6 +49,8 @@ NeoBundle 'hdima/python-syntax', {
       \ }}
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'airblade/vim-gitgutter'
+NeoBundle 'plasticboy/vim-markdown'
+NeoBundle 'kannokanno/previm'
 
 
 call neobundle#end()
@@ -80,9 +83,12 @@ set nohlsearch
 set encoding=utf-8
 set notitle
 set scrolloff=8
+set wildmenu
+set wildmode=longest:full,full
 
 set number
 set noswapfile
+set noundofile
 set nobackup
 set clipboard=unnamed,autoselect
 set mouse=a
@@ -98,14 +104,41 @@ set timeoutlen=200
 
 autocmd FileType python setlocal completeopt-=preview
 
+au BufRead,BufNewFile *.md set filetype=markdown
+let g:previm_open_cmd = 'open -a "/Applications/Google Chrome.app"'
+
+"------------------------------------
+" VimFiler
+"------------------------------------
+let g:vimfiler_as_default_explorer = 1
+nnoremap <silent><C-e> :VimFiler -buffer-name=explorer -split -winwidth=60 -toggle -no-quit<Cr>
+autocmd! FileType vimfiler call s:my_vimfiler_settings()
+function! s:my_vimfiler_settings()
+  nmap     <buffer><expr><Cr> vimfiler#smart_cursor_map("\<Plug>(vimfiler_expand_tree)", "\<Plug>(vimfiler_edit_file)")
+  nnoremap <buffer>s          :call vimfiler#mappings#do_action('my_split')<Cr>
+  nnoremap <buffer>v          :call vimfiler#mappings#do_action('my_vsplit')<Cr>
+endfunction
 
 
+let s:my_action = { 'is_selectable' : 1 }
+function! s:my_action.func(candidates)
+  wincmd p
+  exec 'split '. a:candidates[0].action__path
+endfunction
+call unite#custom_action('file', 'my_split', s:my_action)
+
+let s:my_action = { 'is_selectable' : 1 }                     
+function! s:my_action.func(candidates)
+  wincmd p
+  exec 'vsplit '. a:candidates[0].action__path
+endfunction
+call unite#custom_action('file', 'my_vsplit', s:my_action)
 
 "------------------------------------
 " NERDTree
 "------------------------------------
-nnoremap <silent><C-e> :NERDTreeToggle<CR>
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+"nnoremap <silent><C-e> :NERDTreeToggle<CR>
+"autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
 "------------------------------------
 " neocomplete.vim
@@ -301,7 +334,11 @@ endfunction
 
 function! MyPyenv()
  " return '⌘ '.pyenv#info#preset('long')
- return pyenv#info#format('⌘ %sv %{(|)}iv')
+  if &filetype == 'python'
+    return pyenv#info#format('⌘ %sv %{(|)}iv')
+  else
+    return ''
+  endif
 endfunction
 
 function! MyGitGutter()
@@ -320,7 +357,7 @@ function! MyGitGutter()
   for i in [0, 1, 2]
     if hunks[i] > 0
       call add(ret, symbols[i] . hunks[i])
-    endif
+  endif
   endfor
   return join(ret, ' ')
 endfunction

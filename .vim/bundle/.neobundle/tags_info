@@ -7,12 +7,13 @@ neocomplete
 neomru.vim
 neosnippet
 neosnippet-snippets
-nerdtree
+previm
 python-syntax
 syntastic
 unite.vim
-vim-autoclose
 vim-fugitive
 vim-gitgutter
+vim-markdown
 vim-pyenv
+vimfiler
 vimproc

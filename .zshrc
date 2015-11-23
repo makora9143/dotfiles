@@ -95,7 +95,7 @@ alias subl="/Applications/Sublime\ Text\.app/Contents/SharedSupport/bin/subl"
 alias eclimd="/Applications/eclipse/eclimd"
 alias pypy="~/Downloads/pypy-1.9/bin/pypy"
 alias pypip="~/Downloads/pypy-1.9/bin/pip"
-alias dali="ssh dali.ht.sfc.keio.ac.jp"
+#alias dali="ssh dali.ht.sfc.keio.ac.jp"
 typeset -U path cdpath fpath manpath
 
 export EDITOR=vim

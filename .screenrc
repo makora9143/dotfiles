@@ -1,9 +1,33 @@
-defutf8 on
-defencoding utf8
-encoding utf-8 utf-8
+startup_message off
+
 shell /bin/zsh
+shelltitle "$ |zsh"
+#hardstatus alwayslastline "%{.bW}%-w%{.rW}%n %t%{-}%+w %=%{..G} %H %{..Y} %Y %m/%d %C%a "
+hardstatus alwayslastline '%L=%{= .b}%-w%46>%{= .c}%n %t*%{= .b}%+w%-16=%{= .y}[%l]'
+hardstatus off
 
 escape ^Tt
+
+termcap * 'G0:S0=\E(%.:E0=\E(B:TY=iso2022'
+autodetach on
+defflow off
+crlf off
+vbell off
+vbell_msg "Bell"
+
 defbce "on"
+defutf8 on
+defkanji utf-8
+encoding utf-8 utf-8
+defencoding utf-8
 term xterm-256color
-hardstatus alwayslastline '%L=%{= .b}%-w%46>%{= .c}%n %t*%{= .b}%+w%-16=%{= .y}[%l]'
+
+screen 0
+split -v
+split
+focus
+screen 1
+focus
+screen 2
+focus
+
