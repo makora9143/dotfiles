@@ -1,4 +1,6 @@
+FastFold
 base16-vim
+benchvimrc-vim
 indentLine
 jedi-vim
 lightline.vim
@@ -13,6 +15,7 @@ syntastic
 unite.vim
 vim-fugitive
 vim-gitgutter
+vim-kalisi
 vim-markdown
 vim-pyenv
 vimfiler

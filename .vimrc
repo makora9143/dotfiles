@@ -1,72 +1,73 @@
 let $PATH = "~/.pyenv/shims:".$PATH
-
-set nocompatible
-if 0 | endif
-
-if has('vim_starting')
-  set runtimepath+=~/.vim/bundle/neobundle.vim/
+"dein Scripts-----------------------------
+if &compatible
+  set nocompatible               " Be iMproved
 endif
 
-call neobundle#begin(expand('~/.vim/bundle/'))
+" Required:
+set runtimepath^=/Users/makora/.vim/repos/github.com/Shougo/dein.vim
 
-NeoBundleFetch 'Shougo/neobundle.vim'
-NeoBundle 'scrooloose/syntastic.git'
-NeoBundle 'Shougo/unite.vim'
-NeoBundle 'Shougo/neomru.vim'
-NeoBundle 'Shougo/vimproc', {
-  \ 'build' : {
-    \ 'windows' : 'make -f make_mingw32.mak',
-    \ 'cygwin' : 'make -f make_cygwin.mak',
-    \ 'mac' : 'make -f make_mac.mak',
-    \ 'unix' : 'make -f make_unix.mak',
-  \ },
-  \ }
+" Required:
+call dein#begin(expand('/Users/makora/.vim'))
+
+" Let dein manage dein
+" Required:
+call dein#add('Shougo/dein.vim')
+
+" Add or remove your plugins here:
+call dein#add('Shougo/neosnippet.vim')
+call dein#add('Shougo/neosnippet-snippets')
+call dein#add('Shougo/vimproc', {'build': 'make'})
+call dein#add('Shougo/unite.vim')
+call dein#add('scrooloose/syntastic.git')
+call dein#add('Shougo/neomru.vim')
+
 if has('lua') && (( v:version == 703 && has('patch885')) || (v:version >= 704))
-  NeoBundle 'Shougo/neocomplete'
+  call dein#add('Shougo/neocomplete')
 else
-  NeoBundle 'Shougo/neocomplcache'
+  call dein#add('Shougo/neocomplcache')
 endif
-NeoBundle 'Shougo/neosnippet'
-NeoBundle 'Shougo/neosnippet-snippets'
-NeoBundle 'Shougo/vimfiler'
-NeoBundle 'itchyny/lightline.vim'
-"NeoBundle 'Townk/vim-autoclose'
-"NeoBundle 'scrooloose/nerdtree'
-NeoBundle 'Yggdroot/indentLine'
-NeoBundle 'chriskempson/base16-vim'
-NeoBundleLazy 'davidhalter/jedi-vim', {
+call dein#add('Shougo/vimfiler')
+call dein#add('itchyny/lightline.vim')
+call dein#add('Yggdroot/indentLine')
+"call dein#add('chriskempson/base16-vim')
+call dein#add('davidhalter/jedi-vim', {
       \ "autoload": {
       \  "filetypes": ["python"]
-      \ }}
-NeoBundleLazy "lambdalisue/vim-pyenv", {
+      \ }, 'lazy':1})
+call dein#add("lambdalisue/vim-pyenv", {
       \ "depends": ['davidhalter/jedi-vim'],
       \ "autoload": {
       \ "filetypes": ["python"]
-      \ }}
-NeoBundle 'hdima/python-syntax', {
+      \ }, 'lazy':1})
+call dein#add('hdima/python-syntax', {
       \ "autoload": {
       \  "filetypes": ["python"]
-      \ }}
-NeoBundle 'tpope/vim-fugitive'
-NeoBundle 'airblade/vim-gitgutter'
-NeoBundle 'plasticboy/vim-markdown'
-NeoBundle 'kannokanno/previm'
+      \ }, 'lazy':1})
+call dein#add('tpope/vim-fugitive')
+call dein#add('airblade/vim-gitgutter')
+call dein#add('plasticboy/vim-markdown')
+call dein#add('kannokanno/previm')
+call dein#add('freeo/vim-kalisi')
+call dein#add('mattn/benchvimrc-vim.git')
+call dein#add('Konfekt/FastFold')
 
+" You can specify revision/branch/tag.
+call dein#add('Shougo/vimshell', { 'rev': '3787e5' })
 
-call neobundle#end()
+" Required:
+call dein#end()
 
+" Required:
 filetype plugin indent on
-
-NeoBundleCheck
-
-
-filetype plugin indent on
-
 
 let python_highlight_all=1
 let python_version_2=1
 let g:syntastic_python_checkers = ['pyflakes', 'pep8']
 
+command W w
+command Q q
+command Wq wq
 
 set fileformats=unix,dos
 set ambiwidth=double
@@ -74,7 +75,8 @@ set tabstop=4
 set shiftwidth=4
 set smarttab
 set expandtab
-set tw=0
+set imdisable
+autocmd FileType text setlocal textwidth=0
 
 set ignorecase
 set smartcase
@@ -90,9 +92,10 @@ set number
 set noswapfile
 set noundofile
 set nobackup
-set clipboard=unnamed,autoselect
+set clipboard=unnamed
 set mouse=a
 set autoread
+set tw=0
 
 set laststatus=2
 set showmatch
@@ -106,6 +109,7 @@ autocmd FileType python setlocal completeopt-=preview
 
 au BufRead,BufNewFile *.md set filetype=markdown
 let g:previm_open_cmd = 'open -a "/Applications/Google Chrome.app"'
+let g:tex_conceal=''
 
 "------------------------------------
 " VimFiler
@@ -127,18 +131,13 @@ function! s:my_action.func(candidates)
 endfunction
 call unite#custom_action('file', 'my_split', s:my_action)
 
-let s:my_action = { 'is_selectable' : 1 }                     
+let s:my_action = { 'is_selectable' : 1 }
 function! s:my_action.func(candidates)
   wincmd p
   exec 'vsplit '. a:candidates[0].action__path
 endfunction
 call unite#custom_action('file', 'my_vsplit', s:my_action)
 
-"------------------------------------
-" NERDTree
-"------------------------------------
-"nnoremap <silent><C-e> :NERDTreeToggle<CR>
-"autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
 "------------------------------------
 " neocomplete.vim
@@ -274,14 +273,15 @@ map <silent> [Tag]p :tabprevious<CR>
 " color schemes
 "---------------------------
 let g:base16_shell_path = expand('~/.config/base16-shell')
-let base16colorspace=256
+"let base16colorspace=256
 set t_Co=256
+colorscheme kalisi
 set background=dark
 let g:gitgutter_sign_added = '✚'
 let g:gitgutter_sign_modified = '➜'
 let g:gitgutter_sign_removed = '✘'
 let g:lightline = {
-      \ 'colorscheme': 'wombat',
+      \ 'colorscheme': 'seoul256',
       \ 'separator': { 'left': '⮀', 'right': '⮂' },
       \ 'subseparator': { 'left': '⮁', 'right': '⮃' },
       \ 'active': {
@@ -362,5 +362,4 @@ function! MyGitGutter()
   return join(ret, ' ')
 endfunction
 
-colorscheme base16-material
 syntax on

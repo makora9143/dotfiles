@@ -1,7 +1,8 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =5
+let g:netrw_dirhist_cnt =6
 let g:netrw_dirhist_1='/Users/makora'
 let g:netrw_dirhist_2='/Users/makora/Documents/programming/gaeapp/gaeapp'
 let g:netrw_dirhist_3='/Users/makora/Documents/programming/pycode/m_thesis/tweets/codes/demo_tool'
 let g:netrw_dirhist_4='/Users/makora/Documents/programming/pycode/m_thesis/tweets/csvfiles/modify_data'
 let g:netrw_dirhist_5='/Users/makora/.theano'
+let g:netrw_dirhist_6='/Users/makora/dotfiles'

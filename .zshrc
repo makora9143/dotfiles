@@ -90,7 +90,8 @@ setopt EXTENDED_HISTORY
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
 
-alias ls="gls -pFl --color"
+alias ls="gls -pF --color"
+alias ll="gls -aphFl --color"
 alias subl="/Applications/Sublime\ Text\.app/Contents/SharedSupport/bin/subl"
 alias eclimd="/Applications/eclipse/eclimd"
 alias pypy="~/Downloads/pypy-1.9/bin/pypy"
@@ -123,9 +124,9 @@ eval $(gdircolors ~/config/dircolors-solarized/dircolors.ansi-universal)
 #source /Users/makora/.pythonbrew/etc/bashrc
 #[[ -s "$HOME/.pythonbrew/etc/bashrc" ]] && source "$HOME/.pythonbrew/etc/bashrc"
 # The next line updates PATH for the Google Cloud SDK.
-source '/Users/makora/google-cloud-sdk/path.zsh.inc'
+#source '/Users/makora/google-cloud-sdk/path.zsh.inc'
 # The next line enables bash completion for gcloud.
-source '/Users/makora/google-cloud-sdk/completion.zsh.inc'
+#source '/Users/makora/google-cloud-sdk/completion.zsh.inc'
 
 export PYTHONPATH=$HOME/caffe/python:$PYTHONPATH
 export GEOS_DIR=/usr/local/Cellar/gdal/1.11.1_3/
@@ -135,14 +136,23 @@ export DYLD_LIBRARY_PATH=/Users/makora/torch/install/lib:$DYLD_LIBRARY_PATH
 
 export PYENV_ROOT="${HOME}/.pyenv"
 if [ -d "${PYENV_ROOT}" ]; then
-export PATH=${PYENV_ROOT}/bin:${PYENV_ROOT}/shims:$PATH
 eval "$(pyenv init -)"
 fi
 
 # Base16 Shell
-BASE16_SHELL="$HOME/.config/base16-shell/base16-material.dark.sh"
+#BASE16_SHELL="$HOME/.config/base16-shell/base16-material.dark.sh"
 #BASE16_SHELL="$HOME/.config/base16-shell/base16-tomorrow.dark.sh"
-[[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
+#[[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
 
 export EDITOR=/Applications/MacVim.app/Contents/MacOS/Vim
 alias vim='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
+
+#export PATH=/Applications/UpTeX.app/Contents/Resources/TEX/texbin:$PATH
+export PATH=/opt/intel/bin:$HOME/local_bin:$PATH
+export CC=clang
+export CXX=clang++
+export FFLAGS=-ff2c
+export PYLINK="import sys; import os; print('-L' + os.path.abspath(os.__file__ + '/../..') + ' -lpython2.' + str(sys.version_info[1]))"
+export DYLD_LIBRARY_PATH="/opt/intel/lib/intel64:/opt/intel/lib:/opt/intel/mkl/lib:/usr/local/opt/openblas/lib:$DYLD_LIBRARY_PATH"
+export DYLD_LIBRARY_PATH="/usr/local/cuda/lib":$DYLD_LIBRARY_PATH
+#export DYLD_FALLBACK_LIBRARY_PATH=/usr/local/cuda/lib:/usr/local/lib:/usr/lib:/Developer/NVIDIA/CUDA-7.5/lib:
